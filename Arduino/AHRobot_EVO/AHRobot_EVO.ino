@@ -233,6 +233,10 @@ void loop()
           robot_status = 0;
         }
 
+      robotStrategy();
+
+      // Robot position detection for missing steps detection in stepper motors.
+      missingStepsDetection();
     }
     
 
@@ -285,14 +289,14 @@ void loop()
     //     Serial.print(user_robot_defense_attack_position);
     //   }
 
-      robotStrategy();
+    //   robotStrategy();
 
-      // Robot position detection for missing steps detection in stepper motors.
-      missingStepsDetection();
+    //   // Robot position detection for missing steps detection in stepper motors.
+    //   missingStepsDetection();
 
-      Serial.println();
-      newPacket = 0;
-    }  // End packet received
+    //   Serial.println();
+    //   newPacket = 0;
+    // }  // End packet received
 
     if (testmode)
       testMovements();
