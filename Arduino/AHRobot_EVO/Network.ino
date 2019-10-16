@@ -252,5 +252,3 @@ int ESPsendCommand(char *command, String stopstr, int timeout_secs)
   ESPwait(stopstr, timeout_secs);
   delay(250);
 }
-
-

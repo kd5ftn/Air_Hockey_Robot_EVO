@@ -165,6 +165,7 @@ void setup()
 // Main loop
 void loop()
 {
+  int i;
   int dt;
   uint8_t logOutput = 0;
 
@@ -189,34 +190,47 @@ void loop()
       // If there are detect blocks, print them!
     if (pixy.ccc.numBlocks)
     {
-      Serial.print("Detected ");
-      Serial.println(pixy.ccc.numBlocks);
+//      Serial.print("Detected ");
+//      Serial.println(pixy.ccc.numBlocks);
       for (i=0; i<pixy.ccc.numBlocks; i++)
       {
-        Serial.print("  block ");
-        Serial.print(i);
-        Serial.print(": ");
-        pixy.ccc.blocks[i].print();
-
-        if (pixy.ccc.blocks[i].m_signature == '1') // Puck Detected
+//        Serial.print("  block ");
+//        Serial.print(i);
+//        Serial.print(": ");
+//        pixy.ccc.blocks[i].print();
+        
+        if (pixy.ccc.blocks[i].m_signature == 1) // Puck Detected
         {
           puckOldCoordX = puckCoordX;
           puckOldCoordY = puckCoordY;
           puckCoordX = pixy.ccc.blocks[i].m_x;
           puckCoordY = pixy.ccc.blocks[i].m_y;
+          Serial.println("");
+          Serial.print("PixyPuckX");Serial.println(puckCoordX);
+          Serial.print("PixyPuckY");Serial.println(puckCoordY);
 
           // map(value, fromLow, fromHigh, toLow, toHigh)
           puckCoordX = map(puckCoordX, 70, 220, 0, TABLE_WIDTH); // Map Pixy X Value range 7-200 to Table Width
-          puckCoordY = map(-1 * puckCoordY, 60, 185, 0, TABLE_LENGTH / 2);
+          puckCoordY = map(200 - puckCoordY, 0, 134, 0, TABLE_LENGTH / 2 - 100);
+          Serial.print("TablePuckX");Serial.println(puckCoordX);
+          Serial.print("TablePuckY");Serial.println(puckCoordY);
 
-        } else if (pixy.ccc.blocks[i].m_signature == '2') // Robot Detected
+          
+
+        } else if (pixy.ccc.blocks[i].m_signature == 2) // Robot Detected
         {
           robotCoordX = pixy.ccc.blocks[i].m_x;
           robotCoordY = pixy.ccc.blocks[i].m_y;
+          Serial.println("");
+          Serial.print("PixyRobotX");Serial.println(robotCoordX);
+          Serial.print("PixyRobotY");Serial.println(robotCoordY);          
 
           // map(value, fromLow, fromHigh, toLow, toHigh)
           robotCoordX = map(robotCoordX, 70, 220, 0, TABLE_WIDTH); // Map Pixy X Value range 7-200 to Table Width
-          robotCoordY = map(-1 * robotCoordY, 60, 185, 0, TABLE_LENGTH / 2);
+          robotCoordY = map(200 - robotCoordY, 0, 134, 0, TABLE_LENGTH / 2 - 100);
+          Serial.print("TableRobotX");Serial.println(robotCoordX);
+          Serial.print("TableRobotY");Serial.println(robotCoordY);          
+
         }
 
       }
@@ -233,13 +247,19 @@ void loop()
           robot_status = 0;
         }
 
+      dt = (timer_value - timer_packet_old) / 1000.0;
+       //Serial.println(dt);
+       //dt = 16;  //60 Hz = 16.66ms
+      timer_packet_old = timer_value;
+      cameraProcess(dt);
+      // Strategy based on puck prediction
+      newDataStrategy();
+    }
+    
       robotStrategy();
 
       // Robot position detection for missing steps detection in stepper motors.
       missingStepsDetection();
-    }
-    
-
 
     // packetRead();  // Check for new packets...
     // if (newPacket > 0)
@@ -318,8 +338,3 @@ void loop()
     positionControl();
   } // 1Khz loop
 }
-
-
-
-
-
