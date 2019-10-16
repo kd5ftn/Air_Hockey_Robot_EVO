@@ -184,7 +184,7 @@ void loop()
 
 
     //pixy cOE
-    pixy.ccc.getBlocks();
+    pixy.ccc.getBlocks(false);
 
       // If there are detect blocks, print them!
     if (pixy.ccc.numBlocks)
@@ -197,57 +197,93 @@ void loop()
         Serial.print(i);
         Serial.print(": ");
         pixy.ccc.blocks[i].print();
+
+        if (pixy.ccc.blocks[i].m_signature == '1') // Puck Detected
+        {
+          puckOldCoordX = puckCoordX;
+          puckOldCoordY = puckCoordY;
+          puckCoordX = pixy.ccc.blocks[i].m_x;
+          puckCoordY = pixy.ccc.blocks[i].m_y;
+
+          // map(value, fromLow, fromHigh, toLow, toHigh)
+          puckCoordX = map(puckCoordX, 70, 220, 0, TABLE_WIDTH); // Map Pixy X Value range 7-200 to Table Width
+          puckCoordY = map(-1 * puckCoordY, 60, 185, 0, TABLE_LENGTH / 2);
+
+        } else if (pixy.ccc.blocks[i].m_signature == '2') // Robot Detected
+        {
+          robotCoordX = pixy.ccc.blocks[i].m_x;
+          robotCoordY = pixy.ccc.blocks[i].m_y;
+
+          // map(value, fromLow, fromHigh, toLow, toHigh)
+          robotCoordX = map(robotCoordX, 70, 220, 0, TABLE_WIDTH); // Map Pixy X Value range 7-200 to Table Width
+          robotCoordY = map(-1 * robotCoordY, 60, 185, 0, TABLE_LENGTH / 2);
+        }
+
       }
+
+        if ((puckCoordX > TABLE_WIDTH) || (puckCoordY > TABLE_LENGTH) || (robotCoordX > TABLE_WIDTH) || (robotCoordY > ROBOT_CENTER_Y)) {
+          Serial.print("P ERR99!");
+          Serial.print(puckCoordX);
+          Serial.print(",");
+          Serial.print(puckCoordY);
+          Serial.print(";");
+          Serial.print(robotCoordX);
+          Serial.print(",");
+          Serial.println(robotCoordY);
+          robot_status = 0;
+        }
+
     }
     
 
-    packetRead();  // Check for new packets...
-    if (newPacket > 0)
-    {
-      dt = (timer_value - timer_packet_old) / 1000.0;
-      //Serial.println(dt);
-      //dt = 16;  //60 Hz = 16.66ms
-      timer_packet_old = timer_value;
-      logOutput = 0;
 
-      Serial.print("P");
-      Serial.print(newPacket);
+    // packetRead();  // Check for new packets...
+    // if (newPacket > 0)
+    // {
+    //   dt = (timer_value - timer_packet_old) / 1000.0;
+    //   //Serial.println(dt);
+    //   //dt = 16;  //60 Hz = 16.66ms
+    //   timer_packet_old = timer_value;
+    //   logOutput = 0;
 
-      if (newPacket == 1) // Camera packet
-      {
-        // Puck detection and trayectory prediction
-        cameraProcess(dt);
-        // Strategy based on puck prediction
-        newDataStrategy();
-        // Serial output (DEBUG)
-        //Serial.print(" ");
-        //Serial.print(cam_timestamp);
-        //Serial.print(" ");
-        //Serial.print(puckCoordX);
-        //Serial.print(",");
-        //Serial.print(puckCoordY);
-        //Serial.print(" ");
-        //Serial.print(predict_status);
-        //Serial.print(",");
-        //Serial.print(robot_status);
-      }
-      else if (newPacket == 2) { // User sends a manual move
-        robot_status = 5;    // Manual mode
-        Serial.print(" ");
-        Serial.print(user_target_x);
-        Serial.print(",");
-        Serial.print(user_target_y);
-      }
-      else if (newPacket == 3) {
-        Serial.print(" USER MAX SPEED:");
-        Serial.println(user_max_speed);
-        Serial.print("USER MAX ACCEL:");
-        Serial.println(user_max_accel);
-        Serial.print("USER DEFENSE POSITION:");
-        Serial.println(user_robot_defense_position);
-        Serial.print("USER ATTACK POSITION:");
-        Serial.print(user_robot_defense_attack_position);
-      }
+    //   Serial.print("P");
+    //   Serial.print(newPacket);
+
+    //   if (newPacket == 1) // Camera packet
+    //   {
+    //     // Puck detection and trayectory prediction
+    //     cameraProcess(dt);
+    //     // Strategy based on puck prediction
+    //     newDataStrategy();
+    //     // Serial output (DEBUG)
+    //     //Serial.print(" ");
+    //     //Serial.print(cam_timestamp);
+    //     //Serial.print(" ");
+    //     //Serial.print(puckCoordX);
+    //     //Serial.print(",");
+    //     //Serial.print(puckCoordY);
+    //     //Serial.print(" ");
+    //     //Serial.print(predict_status);
+    //     //Serial.print(",");
+    //     //Serial.print(robot_status);
+    //   }
+    //   else if (newPacket == 2) { // User sends a manual move
+    //     robot_status = 5;    // Manual mode
+    //     Serial.print(" ");
+    //     Serial.print(user_target_x);
+    //     Serial.print(",");
+    //     Serial.print(user_target_y);
+    //   }
+    //   else if (newPacket == 3) {
+    //     Serial.print(" USER MAX SPEED:");
+    //     Serial.println(user_max_speed);
+    //     Serial.print("USER MAX ACCEL:");
+    //     Serial.println(user_max_accel);
+    //     Serial.print("USER DEFENSE POSITION:");
+    //     Serial.println(user_robot_defense_position);
+    //     Serial.print("USER ATTACK POSITION:");
+    //     Serial.print(user_robot_defense_attack_position);
+    //   }
 
       robotStrategy();
 
