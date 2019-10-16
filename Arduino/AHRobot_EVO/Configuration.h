@@ -23,19 +23,24 @@
 
 // This is the center of the table. All units in milimeters
 // This are the dimensions of the official air hockey table Exploter from Buffalo
-#define TABLE_LENGTH 895
-#define TABLE_WIDTH 435
+
+//#define TABLE_LENGTH 895
+//#define TABLE_WIDTH 435
+
+#define TABLE_LENGTH 980
+#define TABLE_WIDTH 450
+
 #define ROBOT_CENTER_X TABLE_WIDTH/2   // Center of robot.
 #define ROBOT_CENTER_Y TABLE_LENGTH/2
 
 // Absolute Min and Max robot positions in mm (measured from center of robot pusher)
-#define ROBOT_MIN_X 60
-#define ROBOT_MIN_Y 58
+#define ROBOT_MIN_X 30
+#define ROBOT_MIN_Y 30
 #define ROBOT_MAX_X TABLE_WIDTH-ROBOT_MIN_X
 #define ROBOT_MAX_Y ROBOT_CENTER_Y-80
 
 // PuckSize (puck radio in mm)
-#define PUCK_SIZE 22
+#define PUCK_SIZE 26
 
 // Initial robot position in mm
 // The robot must be at this position at start time

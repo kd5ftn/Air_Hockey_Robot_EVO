@@ -15,6 +15,10 @@
 // ROBOT and USER configuration parameters
 #include "Configuration.h"
 #include "Definitions.h"   // Variable definitions
+#include <Pixy2.h>         // Requires Pixy2 Arduino Library: https://github.com/charmedlabs/pixy2/raw/master/releases/arduino/arduino_pixy2-1.0.3.zip
+
+Pixy2 pixy;                // This is the main Pixy object 
+
 
 void setup()
 {
@@ -26,8 +30,9 @@ void setup()
   pinMode(5, OUTPUT); // DIR MOTOR 2  PORTC,6
   digitalWrite(4, HIGH);  // Disbale stepper motors
 
-  pinMode(10, OUTPUT);  // Servo1 (arm)
-  pinMode(13, OUTPUT);  // Servo2
+  // Disabling servos to allow pins to be used for ISP - Nick
+  // pinMode(10, OUTPUT);  // Servo1 (arm)
+  // pinMode(13, OUTPUT);  // Servo2
 
   pinMode(A4, OUTPUT);  // Microstepping selector
   digitalWrite(A4, LOW); // 1/8 Microstepping
@@ -43,18 +48,23 @@ void setup()
   delay(1000);
 
   //LED blink
-  for (uint8_t k = 0; k < 5; k++)
-  {
-    digitalWrite(13, HIGH);
-    delay(300);
-    digitalWrite(13, LOW);
-    delay(300);
-  }
+  // for (uint8_t k = 0; k < 5; k++)
+  // {
+  //   digitalWrite(13, HIGH);
+  //   delay(300);
+  //   digitalWrite(13, LOW);
+  //   delay(300);
+  // }
 
   Serial.println("Initializing Wifi module...");
   // ESP Wifi module initialization routine.
   // The Robot will generate it´s own wifi network JJROBOTS_xx and listen external UDP messages...
   ESPInit();
+
+  Serial.println("Initializing Pixy Camera");
+  // This uses the Arduino's ICSP SPI port.
+  pixy.init();
+
 
   Serial.println("Initializing Stepper motors...");
   // STEPPER MOTORS INITIALIZATION
@@ -171,6 +181,25 @@ void loop()
   {
     timer_old = timer_value;
     loop_counter++;
+
+
+    //pixy cOE
+    pixy.ccc.getBlocks();
+
+      // If there are detect blocks, print them!
+    if (pixy.ccc.numBlocks)
+    {
+      Serial.print("Detected ");
+      Serial.println(pixy.ccc.numBlocks);
+      for (i=0; i<pixy.ccc.numBlocks; i++)
+      {
+        Serial.print("  block ");
+        Serial.print(i);
+        Serial.print(": ");
+        pixy.ccc.blocks[i].print();
+      }
+    }
+    
 
     packetRead();  // Check for new packets...
     if (newPacket > 0)
