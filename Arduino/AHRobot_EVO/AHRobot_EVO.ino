@@ -41,7 +41,7 @@ void setup()
   digitalWrite(A3,HIGH); // Enable pullup
 
   Serial.begin(115200);   // PC debug connection
-  Serial1.begin(115200);  // ESP serial connection
+  //Serial1.begin(115200);  // ESP serial connection
   delay(5000);
   Serial.print("AHR JJRobots Air Hockey Robot EVO version ");
   Serial.println(VERSION);
@@ -56,10 +56,10 @@ void setup()
   //   delay(300);
   // }
 
-  Serial.println("Initializing Wifi module...");
+  //Serial.println("Initializing Wifi module...");
   // ESP Wifi module initialization routine.
   // The Robot will generate it´s own wifi network JJROBOTS_xx and listen external UDP messages...
-  ESPInit();
+  //ESPInit();
 
   Serial.println("Initializing Pixy Camera");
   // This uses the Arduino's ICSP SPI port.
