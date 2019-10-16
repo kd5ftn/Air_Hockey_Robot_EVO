@@ -10,7 +10,7 @@
 // RECOMMENDED VALUES FOR 12V POWER SUPPLY
 #define MAX_ACCEL 275           // Maximun motor acceleration in (steps/seg2)/1000. Max recommended value:280
 // #define MAX_SPEED 32000         // Maximun speed in steps/seg. Max absolute value: 32767!!
-#define MAX_SPEED 8000         // Maximun speed in steps/seg. Max absolute value: 32767!!
+#define MAX_SPEED 32000         // Maximun speed in steps/seg. Max absolute value: 32767!!
 
 #define MIN_ACCEL 100
 #define MIN_SPEED 5000
@@ -35,8 +35,8 @@
 #define ROBOT_CENTER_Y TABLE_LENGTH/2
 
 // Absolute Min and Max robot positions in mm (measured from center of robot pusher)
-#define ROBOT_MIN_X 30
-#define ROBOT_MIN_Y 30
+#define ROBOT_MIN_X 40
+#define ROBOT_MIN_Y 40
 #define ROBOT_MAX_X TABLE_WIDTH-ROBOT_MIN_X
 #define ROBOT_MAX_Y ROBOT_CENTER_Y-80
 
@@ -58,7 +58,7 @@
 #define ROBOT_DEFENSE_ATTACK_POSITION_MAX 360
 
 // CORRECTION FOR VISION SYSTEM LAG
-#define VISION_SYSTEM_LAG 60   // in miliseconds
+#define VISION_SYSTEM_LAG 0   // in miliseconds
 
 // CORRECTION OF MISSING STEPS ON MOTORS
 // Coment this lines if you don´t want to make the corrections
