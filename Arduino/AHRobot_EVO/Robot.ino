@@ -82,7 +82,7 @@ boolean checkOwnGoal()
 // robot status:
 //   0: Go to defense position
 //   1: Defense mode (only move on X axis on the defense line)
-//   2: Defense + attach mode
+//   2: Defense + attack mode
 //   3: Attack mode
 //   4: ?? REMOVE ??
 //   5: Manual mode => User send direct commands to robot

@@ -64,9 +64,9 @@ void setup()
   // The Robot will generate it´s own wifi network JJROBOTS_xx and listen external UDP messages...
   //ESPInit();
 
-  Serial.println("Initializing Pixy Camera");
-  // This uses the Arduino's ICSP SPI port.
-  pixy.init();
+  // Serial.println("Initializing Pixy Camera");
+  // // This uses the Arduino's ICSP SPI port.
+  // pixy.init();
 
 
   Serial.println("Initializing Stepper motors...");
@@ -314,7 +314,7 @@ void loop()
     //     Serial.print(user_robot_defense_attack_position);
     //   }
 
-    //   robotStrategy();
+      robotStrategy();
 
     //   // Robot position detection for missing steps detection in stepper motors.
     //   missingStepsDetection();
@@ -339,13 +339,13 @@ void loop()
     if ((loop_counter % 10) == 0)
       updatePosition_straight();  // update straight line motion algorithm
 
-      if ((loop_counter % 1000) == 0) {
-        Serial.print('real_position_x: ');Serial.println(real_position_x);
-        Serial.print('real_position_y: ');Serial.println(real_position_y);
-      }
+      // if ((loop_counter % 1000) == 0) {
+      //   Serial.print("real_position_x: ");Serial.println(real_position_x);
+      //   Serial.print("real_position_y: ");Serial.println(real_position_y);
+      // }
 
 //     // Position, speed and acceleration control:
-//     positionControl();
+     positionControl();
   } // 1Khz loop
 }
 
@@ -389,7 +389,10 @@ void processSerialCommand() {
             Serial.print("Moving to position [");
             Serial.print(x);Serial.print(",");Serial.print(y);
             Serial.println("]");
-            setPosition_straight(x,y)
+            setPosition_straight(x,y);
+        }
+        else if (command.startsWith("G1")) {
+          setPosition_straight(ROBOT_CENTER_X, ROBOT_DEFENSE_POSITION_DEFAULT + 20);
         }
         else if (command.startsWith("X")) { 
             Serial.println("STOPPING!");
