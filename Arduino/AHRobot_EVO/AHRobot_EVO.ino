@@ -19,6 +19,9 @@
 
 Pixy2 pixy;                // This is the main Pixy object 
 
+const byte numChars = 32;
+char receivedChars[numChars]; // an array to store the received data
+boolean newData = false;
 
 void setup()
 {
@@ -183,83 +186,85 @@ void loop()
     timer_old = timer_value;
     loop_counter++;
 
+    receiveSerialData();
+    processSerialCommand();
 
-    //pixy cOE
-    pixy.ccc.getBlocks(false);
+//     //pixy cOE
+//     pixy.ccc.getBlocks(false);
 
-      // If there are detect blocks, print them!
-    if (pixy.ccc.numBlocks)
-    {
-//      Serial.print("Detected ");
-//      Serial.println(pixy.ccc.numBlocks);
-      for (i=0; i<pixy.ccc.numBlocks; i++)
-      {
-//        Serial.print("  block ");
-//        Serial.print(i);
-//        Serial.print(": ");
-//        pixy.ccc.blocks[i].print();
+//       // If there are detect blocks, print them!
+//     if (pixy.ccc.numBlocks)
+//     {
+// //      Serial.print("Detected ");
+// //      Serial.println(pixy.ccc.numBlocks);
+//       for (i=0; i<pixy.ccc.numBlocks; i++)
+//       {
+// //        Serial.print("  block ");
+// //        Serial.print(i);
+// //        Serial.print(": ");
+// //        pixy.ccc.blocks[i].print();
         
-        if (pixy.ccc.blocks[i].m_signature == 1) // Puck Detected
-        {
-          puckOldCoordX = puckCoordX;
-          puckOldCoordY = puckCoordY;
-          puckCoordX = pixy.ccc.blocks[i].m_x;
-          puckCoordY = pixy.ccc.blocks[i].m_y;
-          Serial.println("");
-          Serial.print("PixyPuckX");Serial.println(puckCoordX);
-          Serial.print("PixyPuckY");Serial.println(puckCoordY);
+//         if (pixy.ccc.blocks[i].m_signature == 1) // Puck Detected
+//         {
+//           puckOldCoordX = puckCoordX;
+//           puckOldCoordY = puckCoordY;
+//           puckCoordX = pixy.ccc.blocks[i].m_x;
+//           puckCoordY = pixy.ccc.blocks[i].m_y;
+//           Serial.println("");
+//           Serial.print("PixyPuckX");Serial.println(puckCoordX);
+//           Serial.print("PixyPuckY");Serial.println(puckCoordY);
 
-          // map(value, fromLow, fromHigh, toLow, toHigh)
-          puckCoordX = map(puckCoordX, 70, 220, 0, TABLE_WIDTH); // Map Pixy X Value range 7-200 to Table Width
-          puckCoordY = map(200 - puckCoordY, 0, 134, 0, TABLE_LENGTH / 2 - 100);
-          Serial.print("TablePuckX");Serial.println(puckCoordX);
-          Serial.print("TablePuckY");Serial.println(puckCoordY);
+//           // map(value, fromLow, fromHigh, toLow, toHigh)
+//           puckCoordX = map(puckCoordX, 70, 220, 0, TABLE_WIDTH); // Map Pixy X Value range 7-200 to Table Width
+//           puckCoordY = map(200 - puckCoordY, 0, 134, 0, TABLE_LENGTH / 2 - 100);
+//           Serial.print("TablePuckX");Serial.println(puckCoordX);
+//           Serial.print("TablePuckY");Serial.println(puckCoordY);
 
           
 
-        } else if (pixy.ccc.blocks[i].m_signature == 2) // Robot Detected
-        {
-          robotCoordX = pixy.ccc.blocks[i].m_x;
-          robotCoordY = pixy.ccc.blocks[i].m_y;
-          Serial.println("");
-          Serial.print("PixyRobotX");Serial.println(robotCoordX);
-          Serial.print("PixyRobotY");Serial.println(robotCoordY);          
+//         } else if (pixy.ccc.blocks[i].m_signature == 2) // Robot Detected
+//         {
+//           robotCoordX = pixy.ccc.blocks[i].m_x;
+//           robotCoordY = pixy.ccc.blocks[i].m_y;
+//           Serial.println("");
+//           Serial.print("PixyRobotX");Serial.println(robotCoordX);
+//           Serial.print("PixyRobotY");Serial.println(robotCoordY);          
 
-          // map(value, fromLow, fromHigh, toLow, toHigh)
-          robotCoordX = map(robotCoordX, 70, 220, 0, TABLE_WIDTH); // Map Pixy X Value range 7-200 to Table Width
-          robotCoordY = map(200 - robotCoordY, 0, 134, 0, TABLE_LENGTH / 2 - 100);
-          Serial.print("TableRobotX");Serial.println(robotCoordX);
-          Serial.print("TableRobotY");Serial.println(robotCoordY);          
+//           // map(value, fromLow, fromHigh, toLow, toHigh)
+//           robotCoordX = map(robotCoordX, 70, 220, 0, TABLE_WIDTH); // Map Pixy X Value range 7-200 to Table Width
+//           robotCoordY = map(200 - robotCoordY, 0, 134, 0, TABLE_LENGTH / 2 - 100);
+//           Serial.print("TableRobotX");Serial.println(robotCoordX);
+//           Serial.print("TableRobotY");Serial.println(robotCoordY);          
 
-        }
+//         }
 
-      }
+//       }
 
-        if ((puckCoordX > TABLE_WIDTH) || (puckCoordY > TABLE_LENGTH) || (robotCoordX > TABLE_WIDTH) || (robotCoordY > ROBOT_CENTER_Y)) {
-          Serial.print("P ERR99!");
-          Serial.print(puckCoordX);
-          Serial.print(",");
-          Serial.print(puckCoordY);
-          Serial.print(";");
-          Serial.print(robotCoordX);
-          Serial.print(",");
-          Serial.println(robotCoordY);
-          robot_status = 0;
-        }
+//         if ((puckCoordX > TABLE_WIDTH) || (puckCoordY > TABLE_LENGTH) || (robotCoordX > TABLE_WIDTH) || (robotCoordY > ROBOT_CENTER_Y)) {
+//           Serial.print("P ERR99!");
+//           Serial.print(puckCoordX);
+//           Serial.print(",");
+//           Serial.print(puckCoordY);
+//           Serial.print(";");
+//           Serial.print(robotCoordX);
+//           Serial.print(",");
+//           Serial.println(robotCoordY);
+//           robot_status = 0;
+//         }
 
-      dt = (timer_value - timer_packet_old) / 1000.0;
-       //Serial.println(dt);
-       //dt = 16;  //60 Hz = 16.66ms
-      timer_packet_old = timer_value;
-      cameraProcess(dt);
-      // Strategy based on puck prediction
-      newDataStrategy();
-    }
+//       dt = (timer_value - timer_packet_old) / 1000.0;
+//        //Serial.println(dt);
+//        //dt = 16;  //60 Hz = 16.66ms
+//       timer_packet_old = timer_value;
+//       cameraProcess(dt);
+//       // Strategy based on puck prediction
+//       newDataStrategy();
+//     }
     
-      robotStrategy();
+//       robotStrategy();
 
-      // Robot position detection for missing steps detection in stepper motors.
-      missingStepsDetection();
+//       // Robot position detection for missing steps detection in stepper motors.
+//       missingStepsDetection();
 
     // packetRead();  // Check for new packets...
     // if (newPacket > 0)
@@ -318,23 +323,94 @@ void loop()
     //   newPacket = 0;
     // }  // End packet received
 
-    if (testmode)
-      testMovements();
+//     if (testmode)
+//       testMovements();
 
-#ifdef DEBUG
-    // DEBUG: We inform of the position error of the robot as seen in the camera (util for calibrations)
-    if ((loop_counter % 1293) == 0) {
-      Serial.print("ROBOT MSD: ");
-      Serial.print(robotMissingStepsErrorX);
-      Serial.print(",");
-      Serial.println(robotMissingStepsErrorY);
-    }
-#endif
+// #ifdef DEBUG
+//     // DEBUG: We inform of the position error of the robot as seen in the camera (util for calibrations)
+//     if ((loop_counter % 1293) == 0) {
+//       Serial.print("ROBOT MSD: ");
+//       Serial.print(robotMissingStepsErrorX);
+//       Serial.print(",");
+//       Serial.println(robotMissingStepsErrorY);
+//     }
+// #endif
 
     if ((loop_counter % 10) == 0)
       updatePosition_straight();  // update straight line motion algorithm
 
-    // Position, speed and acceleration control:
-    positionControl();
+      if ((loop_counter % 1000) == 0) {
+        Serial.print('real_position_x: ');Serial.println(real_position_x);
+        Serial.print('real_position_y: ');Serial.println(real_position_y);
+      }
+
+//     // Position, speed and acceleration control:
+//     positionControl();
   } // 1Khz loop
+}
+
+void receiveSerialData() {
+    // https://forum.arduino.cc/index.php?topic=288234.0
+    static byte ndx = 0;
+    char endMarker = '\r';
+    char rc;
+
+    while (Serial.available() > 0 && newData == false) {
+        rc = Serial.read();
+
+        Serial.print(rc); // echo receieved data
+
+        if (rc != endMarker) {
+            receivedChars[ndx] = rc;
+            ndx++;
+            if (ndx >= numChars) {
+                ndx = numChars - 1;
+            }
+        }
+        else {
+            receivedChars[ndx] = '\0'; // terminate the string
+            ndx = 0;
+            newData = true;
+        }
+    }
+}
+
+void processSerialCommand() {
+    if (newData == true) {
+        String command(receivedChars);
+        command.trim();
+        Serial.print("Processing: ");
+        Serial.print(command);
+        Serial.println();
+
+        if (command.startsWith("G0")) {
+            int x = getValue(command, "X", " ");
+            int y = getValue(command, "Y", " ");
+            Serial.print("Moving to position [");
+            Serial.print(x);Serial.print(",");Serial.print(y);
+            Serial.println("]");
+            setPosition_straight(x,y)
+        }
+        else if (command.startsWith("X")) { 
+            Serial.println("STOPPING!");
+        }
+        else {
+            Serial.println("Command not supported");
+        } 
+
+        Serial.println("Done!");
+        Serial.println();
+        Serial.print("> ");
+        newData = false;
+    }
+}
+
+int getValue(String command, String argument, String delimiter) {
+    
+    int argIndex = command.indexOf(argument);
+    int delimiterIndex = command.indexOf(delimiter, argIndex);
+    int argLen = argument.length();
+    
+    return command.substring(argIndex + argLen, delimiterIndex).toInt();
+
 }
